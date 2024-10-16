@@ -8,11 +8,15 @@ import NftCard from "../Nft-card/NftCard";
 import { NFT__DATA } from "../../../assets/data/data.js";
 
 import "./live-auction.css";
+// import { getOwnedNFTs } from "../../contracts/contractInteraction.js";
 
 const LiveAuction = () => {
   const { nfts } = useContext(AppContext);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // console.log(account);
+    // getOwnedNFTs();
+  }, []);
 
   return (
     <section>
@@ -34,7 +38,7 @@ const LiveAuction = () => {
           ))} */}
 
           {nfts.length > 0 ? (
-            nfts.slice(0, 6).map((item) => (
+            nfts.map((item) => (
               <Col lg="3" md="4" sm="6" className="mb-4" key={item.id}>
                 <NftCard item={item} />
               </Col>

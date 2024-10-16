@@ -1,21 +1,51 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
-
-import { getNFTs } from "../components/contracts/contractInteraction.js";
+import {
+  getNFTs,
+  getOwnedNFTs,
+} from "../components/contracts/contractInteraction.js";
+import { generateRandomName } from "../components/utility/randomNameGenerator.js";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [account, setAccount] = useState("");
+  const [walletInfo, setWalletInfo] = useState({});
   const [nfts, setNfts] = useState([]);
+  const [ownedNfts, setOwnedNfts] = useState([]);
+  const [accountNames, setAccountNames] = useState({});
+  const [addressAvatarMap, setAddressAvatarMap] = useState({});
+
+  const avatarImages = [
+    "ava-01.png",
+    "ava-02.png",
+    "ava-03.png",
+    "ava-04.png",
+    "ava-05.png",
+    "ava-06.png",
+  ];
 
   useEffect(() => {
-    const storedAccount = localStorage.getItem("account");
-    if (storedAccount) {
-      setAccount(storedAccount);
-    }
+    const storedWalletInfo = JSON.parse(localStorage.getItem("walletInfo"));
+    const storedAccountNames =
+      JSON.parse(localStorage.getItem("accountNames")) || {};
+    const storedAvatarMap =
+      JSON.parse(localStorage.getItem("addressAvatarMap")) || {};
     const storedNFTs = localStorage.getItem("nfts");
+    const storedOwnedNFTs = localStorage.getItem("ownedNfts");
+
+    if (storedWalletInfo && Object.keys(storedWalletInfo).length > 0) {
+      setWalletInfo(storedWalletInfo);
+    }
+    if (Object.keys(storedAccountNames).length > 0) {
+      setAccountNames(storedAccountNames);
+    }
+    if (Object.keys(storedAvatarMap).length > 0) {
+      setAddressAvatarMap(storedAvatarMap);
+    }
     if (storedNFTs) {
       setNfts(JSON.parse(storedNFTs));
+    }
+    if (storedOwnedNFTs) {
+      setOwnedNfts(JSON.parse(storedOwnedNFTs));
     }
   }, []);
 
@@ -34,17 +64,66 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("nfts", JSON.stringify(newNFTs));
   };
 
-  const updateAccount = (newAccount) => {
-    setAccount(newAccount);
-    localStorage.setItem("account", newAccount);
+  const fetchOwnedNFTs = useCallback(async () => {
+    try {
+      const fetchedOwnedNFTs = await getOwnedNFTs();
+      console.log("Fetched Owned NFTs:", fetchedOwnedNFTs);
+      setOwnedNfts(fetchedOwnedNFTs);
+    } catch (error) {
+      console.error("Error fetching NFTs:", error);
+    }
+  }, []);
+
+  const updateOwnedNFTs = (newOwnedNFTs) => {
+    setOwnedNfts(newOwnedNFTs);
+    localStorage.setItem("ownedNfts", JSON.stringify(newOwnedNFTs));
+  };
+
+  const updateWalletInfo = (newWalletInfo) => {
+    const { account } = newWalletInfo;
+
+    let updatedAccountNames = { ...accountNames };
+    let updatedAvatarMap = { ...addressAvatarMap };
+
+    // Assign name if the account is new
+    if (!updatedAccountNames[account]) {
+      updatedAccountNames[account] = generateRandomName();
+    }
+
+    // Assign avatar if the account is new
+    if (!updatedAvatarMap[account]) {
+      const randomAvatar =
+        avatarImages[Math.floor(Math.random() * avatarImages.length)];
+      updatedAvatarMap[account] = randomAvatar;
+    }
+
+    const fullWalletInfo = {
+      ...newWalletInfo,
+      name: updatedAccountNames[account],
+      avatar: updatedAvatarMap[account],
+    };
+
+    // Update states and localStorage
+    setWalletInfo(fullWalletInfo);
+    setAccountNames(updatedAccountNames);
+    setAddressAvatarMap(updatedAvatarMap);
+
+    localStorage.setItem("walletInfo", JSON.stringify(fullWalletInfo));
+    localStorage.setItem("accountNames", JSON.stringify(updatedAccountNames));
+    localStorage.setItem("addressAvatarMap", JSON.stringify(updatedAvatarMap));
   };
 
   const valuesToShare = {
     nfts,
     fetchNFTs,
     updateNFTs,
-    account,
-    updateAccount,
+    ownedNfts,
+    fetchOwnedNFTs,
+    updateOwnedNFTs,
+    walletInfo,
+    accountNames,
+    addressAvatarMap,
+    updateWalletInfo,
   };
 
   return (

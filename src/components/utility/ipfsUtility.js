@@ -62,3 +62,10 @@ export async function getMetadataFromIPFS(tokenURI) {
     throw error;
   }
 }
+
+export function ipfsToHttp(url) {
+  if (url.startsWith("ipfs://")) {
+    return `https://ipfs.io/ipfs/${url.slice(7)}`;
+  }
+  return url;
+}

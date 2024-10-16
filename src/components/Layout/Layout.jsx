@@ -1,5 +1,6 @@
 import React from "react";
 import { useContext, useEffect } from "react";
+
 import Routers from "../../routes/Routers";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
@@ -7,11 +8,12 @@ import Footer from "../Footer/Footer";
 import { AppContext } from "../../contexts/Context";
 
 const Layout = () => {
-  const { fetchNFTs } = useContext(AppContext);
+  const { fetchNFTs, fetchOwnedNFTs, walletInfo } = useContext(AppContext);
 
   useEffect(() => {
     fetchNFTs();
-  }, [fetchNFTs]);
+    fetchOwnedNFTs();
+  }, [fetchNFTs, fetchOwnedNFTs, walletInfo]);
 
   return (
     <div>

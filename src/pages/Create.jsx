@@ -10,6 +10,7 @@ import avatar from "../assets/images/ava-01.png";
 import { AppContext } from "../contexts/Context";
 import MyNFTContract from "../components/contracts/NFTMarketplace.json";
 import {
+  ipfsToHttp,
   uploadFileToIPFS,
   uploadMetadataToIPFS,
 } from "../components/utility/ipfsUtility";
@@ -35,6 +36,7 @@ const Create = () => {
   const [price, setPrice] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [royalty, setRoyalty] = useState(0); // New state for royalty
 
   const handlePriceChange = (e) => {
     const inputPrice = e.target.value;
@@ -42,6 +44,19 @@ const Create = () => {
       setPrice(inputPrice);
     } else {
       console.error("Invalid price entered");
+    }
+  };
+
+  const handleRoyaltyChange = (e) => {
+    const inputRoyalty = e.target.value;
+    if (
+      !isNaN(inputRoyalty) &&
+      Number(inputRoyalty) >= 0 &&
+      Number(inputRoyalty) <= 100
+    ) {
+      setRoyalty(inputRoyalty);
+    } else {
+      console.error("Invalid royalty entered");
     }
   };
 
@@ -78,9 +93,12 @@ const Create = () => {
           signer
         );
 
-        const tx = await contract.mint(metadataURI);
+        console.log("Minting NFT...");
+        // Pass royalty percentage when minting
+        const tx = await contract.mint(metadataURI, royalty);
         const receipt = await tx.wait();
-        // In ethers v6, we need to use the logs directly
+
+        // Extract tokenId from the Transfer event
         const transferLog = receipt.logs.find(
           (log) =>
             log.topics[0] === contract.interface.getEvent("Transfer").topicHash
@@ -92,7 +110,7 @@ const Create = () => {
         console.log("Minted NFT with token ID:", tokenId);
 
         if (price) {
-          console.log("Price to be parsed as ether:", price);
+          console.log("Listing NFT for sale...");
           const ethPrice = parseEther(price.toString());
           const listTx = await contract.listNFT(tokenId, ethPrice);
           await listTx.wait();
@@ -104,10 +122,12 @@ const Create = () => {
           id: tokenId,
           title: metadata.name,
           desc: metadata.description,
-          imgUrl: fileURI,
+          imgUrl: ipfsToHttp(fileURI),
           creator: await signer.getAddress(),
+          owner: await signer.getAddress(),
           creatorImg: "", // Add logic to fetch or set creator image if needed
           currentBid: price || "0",
+          royalty: royalty, // Include royalty in the NFT data
         };
 
         updateNFTs([...nfts, newNFT]);
@@ -146,8 +166,22 @@ const Create = () => {
                       type="number"
                       placeholder="Enter price for one item (ETH)"
                       value={price}
-                      // min="0"
+                      min="0"
+                      step="0.000001" // Allows small decimal values
                       onChange={handlePriceChange}
+                    />
+                  </div>
+
+                  <div className="form__input">
+                    <label htmlFor="">Royalty (%)</label>
+                    <input
+                      type="number"
+                      placeholder="Enter royalty percentage"
+                      value={royalty}
+                      step="0.000001" // Allows small decimal values
+                      onChange={handleRoyaltyChange}
+                      min="0"
+                      max="100"
                     />
                   </div>
 

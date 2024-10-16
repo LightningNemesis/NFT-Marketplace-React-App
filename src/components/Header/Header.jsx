@@ -1,8 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import "./header.css";
 import { Container } from "reactstrap";
 
 import { NavLink, Link } from "react-router-dom";
+
+import { AppContext } from "../../contexts/Context";
 
 const NAV__LINKS = [
   {
@@ -24,6 +26,8 @@ const NAV__LINKS = [
 ];
 
 const Header = () => {
+  const { walletInfo } = useContext(AppContext);
+
   const headerRef = useRef(null);
 
   const menuRef = useRef(null);
@@ -77,16 +81,36 @@ const Header = () => {
             </ul>
           </div>
 
-          <div className="nav__right d-flex align-items-center gap-5 ">
+          <div className="nav__right d-flex align-items-center gap-5">
             <button className="btn d-flex gap-2 align-items-center">
-              <span>
-                <i class="ri-wallet-line"></i>
+              <span style={{ position: "relative", display: "inline-block" }}>
+                {walletInfo && Object.keys(walletInfo).length === 0 ? (
+                  <i className="ri-wallet-line"></i>
+                ) : (
+                  <>
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: "-2px", // Adjust as needed
+                        right: "-2px", // Adjust as needed
+                        width: "8px",
+                        height: "8px",
+                        backgroundColor: "green",
+                        borderRadius: "50%",
+                      }}
+                    ></span>
+                  </>
+                )}
               </span>
-              <Link to="/wallet">Connect Wallet</Link>
+              <Link to="/wallet">
+                {walletInfo && Object.keys(walletInfo).length === 0
+                  ? "Connect Wallet"
+                  : `Wallet Connected: ${walletInfo.account.slice(0, 5)}`}
+              </Link>
             </button>
 
             <span className="mobile__menu">
-              <i class="ri-menu-line" onClick={toggleMenu}></i>
+              <i className="ri-menu-line" onClick={toggleMenu}></i>
             </span>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ethers } from "ethers";
 import CommonSection from "../components/ui/Common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
@@ -31,7 +31,7 @@ const wallet__data = [
 ];
 
 const Wallet = () => {
-  const { account, updateAccount } = useContext(AppContext);
+  const { walletInfo, updateWalletInfo, accountNames } = useContext(AppContext);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -45,28 +45,26 @@ const Wallet = () => {
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
 
-        // Update account state with address
-        updateAccount(address);
-
         // Fetch and format the balance
         const balance = await provider.getBalance(address);
         const formattedBalance = ethers.formatEther(balance);
 
-        console.log("Connected account:", address);
-        console.log("Account balance:", formattedBalance, "ETH");
-
-        // Fetch ENS name, if available
-        // const ensName = await provider.lookupAddress(address);
-        // if (ensName) {
-        //   console.log("ENS Name:", ensName);
-        // } else {
-        //   console.log("No ENS Name found for this account.");
-        // }
-
         // Fetch the network information
         const network = await provider.getNetwork();
-        console.log("Connected Network:", network.name);
-        console.log("Network Chain ID:", network.chainId);
+
+        // Generate a random name for the account
+
+        // Store the fetched details in an object
+        const newWalletInfo = {
+          account: address,
+          balance: formattedBalance + " ETH",
+          networkName: network.name || "unknown",
+          networkChainId: network.chainId.toString(),
+        };
+
+        console.log("New Wallet Info:", newWalletInfo);
+
+        updateWalletInfo(newWalletInfo);
       } catch (error) {
         console.error("Error connecting to MetaMask:", error);
       }
@@ -74,6 +72,27 @@ const Wallet = () => {
       console.error("MetaMask is not installed.");
     }
   };
+
+  useEffect(() => {
+    // console.log("Wallet Info:", walletInfo);
+    // console.log("Account Names:", accountNames);
+    if (window.ethereum) {
+      const handleAccountsChanged = (accounts) => {
+        if (accounts.length > 0) {
+          connectWallet(); // Reconnect and update wallet info
+        }
+      };
+
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+
+      return () => {
+        window.ethereum.removeListener(
+          "accountsChanged",
+          handleAccountsChanged
+        );
+      };
+    }
+  }, [walletInfo, accountNames]);
 
   return (
     <>
@@ -90,9 +109,18 @@ const Wallet = () => {
                   unde officiis placeat!
                 </p>
                 <button onClick={connectWallet} className="btn btn-primary">
-                  Connect MetaMask
+                  {Object.keys(walletInfo).length === 0
+                    ? "Get Wallet Info"
+                    : "Update Wallet Information"}
                 </button>
-                {account && <p>Connected Account: {account}</p>}
+                {Object.keys(walletInfo).length > 0 && (
+                  <>
+                    <p>Account name: {walletInfo.name}</p>
+                    <p>Account address: {walletInfo.account}</p>
+                    <p>Account Balance: {walletInfo.balance}</p>
+                    <p>Network ChainID: {walletInfo.networkChainId}</p>
+                  </>
+                )}
               </div>
             </Col>
 

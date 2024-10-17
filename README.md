@@ -4,7 +4,7 @@ Welcome to Artifactory, an exclusive NFT marketplace where users can mint, view,
 
 You can access the deployed app here:
 
-https://nft-marketplace-react-4bflr874v-lightningnemesis-projects.vercel.app/home
+https://nft-marketplace-react-otiom2j0h-lightningnemesis-projects.vercel.app/home
 
 ## Project Overview
 

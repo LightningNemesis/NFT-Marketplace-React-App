@@ -22,6 +22,9 @@ const Home = () => {
     walletInfo,
     updateWalletInfo,
     accountNames,
+
+    fetchNFTs,
+    fetchOwnedNFTs,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -39,9 +42,10 @@ const Home = () => {
     //     );
     //   };
     // }
-    console.log("minted nfts", mintedNfts);
-    console.log("listed nfts", nfts);
-    console.log("owned nfts", ownedNfts);
+    // console.log("minted nfts", mintedNfts);
+    // console.log("listed nfts", nfts);
+    // console.log("owned nfts", ownedNfts);
+    fetchNFTs();
   }, [walletInfo, accountNames]);
 
   return (

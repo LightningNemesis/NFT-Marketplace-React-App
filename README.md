@@ -1,81 +1,182 @@
-# Getting Started with Create React App
+# Artifactory - NFT Marketplace
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to Artifactory, an exclusive NFT marketplace where users can mint, view, list, and purchase NFTs, complete with creator royalties on resales. This project includes both Solidity smart contract development and front-end integration.
 
-## Available Scripts
+You can access the deployed app here:
 
-In the project directory, you can run:
+https://nft-marketplace-react-4bflr874v-lightningnemesis-projects.vercel.app/home
 
-### `npm start`
+## Project Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Smart Contract (ERC-721):
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+• A custom ERC-721 smart contract written in Solidity.
+• Supports minting, listing, and purchasing NFTs.
+• Includes royalty functionality, so original creators earn royalties on each resale.
 
-### `npm test`
+Front-End:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+• Developed using React and Ethers.js for blockchain interaction.
+• Users can connect their wallet, mint NFTs, view marketplace listings, and make purchases.
 
-### `npm run build`
+Deployment:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+• The smart contract is deployed on the `Skopje testnet` using Hardhat.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+• Details about the ERC721 smart contract and the available functions are listed on the smart contract repo
+https://github.com/LightningNemesis/NFT-Marketplace
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Features
 
-### `npm run eject`
+1. Mint NFTs: Easily mint NFTs directly through the front-end.
+2. List NFTs for Sale: Place NFTs for sale on the marketplace.
+3. Buy NFTs: Browse listings and make purchases directly.
+4. Creator Royalties: Ensure that original creators receive a royalty on resales.
+5. Wallet Connection: Seamlessly connect your wallet and manage digital assets.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Setup and Installation
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Installation Steps
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Prerequisites
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    •	Node.js & Yarn
+    •	MetaMask or another Ethereum wallet
+    •	Hardhat
 
-## Learn More
+1. Clone the repository:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+git clone https://github.com/LightningNemesis/NFT-Marketplace-React-App.git
+cd NFT-Marketplace-React-App
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. Install dependencies with Yarn:
 
-### Code Splitting
+```
+yarn install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. Set up environment variables:
 
-### Analyzing the Bundle Size
+Create a .env file in the root directory and add your environment variables:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+REACT_APP_CONTRACT_ADDRESS=0xaaaaaa
+REACT_APP_RPC_URL=https://skopje-rpc.gptprotocol.io
 
-### Making a Progressive Web App
+# We are using Pinata for ipfs, change it as required
+REACT_APP_PINATA_API_KEY=0xaaaaaa
+REACT_APP_PINATA_API_SECRET=0xaaaaaa
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+4. Start the front-end:
 
-### Advanced Configuration
+```
+yarn start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Running the Project
 
-### Deployment
+After completing the setup, you can launch the front-end application:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    •	Navigate to http://localhost:3000.
 
-### `npm run build` fails to minify
+    •	Connect your wallet and start exploring the marketplace.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### Connecting to wallet
 
-color: #14141f;
-background: linear-gradient(-45deg, #E250E5, #4B50E6, #E250E5, #4B50E6);
-background-size: 100% 100%;
--webkit-background-clip: text;
--webkit-text-stroke: 3px transparent;
--webkit-text-fill-color: #14141f;
+We will need to click on the Connect Wallet icon on the top right
 
-border-color: #5142FC
-card-color: #343444
-body-color: #14141f
+![Alt text](./src/assets/readme/connect-to-wallet.png)
+
+Click on the metamask brower extension & allow connections to all wallets you wish to connect
+
+![Alt text](./src/assets/readme/connect-to-wallet-2.png)
+
+Grant Permissions
+
+![Alt text](./src/assets/readme/connect-to-wallet-3.png)
+
+You will see your wallet connected and a `random generated name` will be assigned to it (eg. Wise Tiger)
+
+![Alt text](./src/assets/readme/wallet-connected.png)
+
+#### Navigating the app
+
+##### Live Auction & Owned NFT sections
+
+We have the home page which contains the `Live Auction` and `Owned NFTs` section
+
+Clicking on the NFT's name will take us to the details page, which contains the following information:
+
+![Alt text](./src/assets/readme/NFT-details.png)
+
+1. Owned by: Current owner of the NFT
+2. Created by: Creator owner of the NFT
+3. Owner address: Wallet address for the owner
+4. Creator address: Wallet address for the creator
+5. Current Price: Price at which the NFT is listed on the `Live Auction` section
+6. Royalty: Percentage of the sale price which is sent by the smart contract to the creator
+
+##### Create NFT page
+
+![Alt text](./src/assets/readme/CreateNFT.png)
+
+Users need to enter the following details for creating an NFT
+
+1. Image (will be uploaded for ipfs which returns a token URI containing the NFT metadata)
+2. Price
+3. Royalty (in percentage) [value entered will be a number]
+4. Title
+5. Description for the NFT
+
+Note: An error will be thrown if any of the fields are missing
+
+    Once user enters all the details for the NFT, click on the `Create NFT` button
+
+This will ask you to approve 2 transactions from your wallet:
+
+- Minting the NFT
+- Listing the NFT on the marketplace
+
+Post the listing is successful, we see a success `toast` and we can check the newly created NFT on the `Home Page` > `Live Auction` section
+
+![Alt text](./src/assets/readme/minting.png)
+![Alt text](./src/assets/readme/approval-metamask.png)
+![Alt text](./src/assets/readme/create-success.png)
+
+Post minting & listing, NFT is listed on the Home page
+![Alt text](./src/assets/readme/live-after-create.png)
+
+### Buying an NFT
+
+From the NFTs listed on the `live auction` section, click on `Buy` button
+
+This will initiate a transaction on your wallet and will transfer ownership from the current owner to you
+
+This will also send the `royalty %` of the sale to the creator of the nft, as implemented in the smart contract logic.
+
+### Listing an owned NFT on marketplace
+
+- Scroll down to the `Owned NFTs` section in the `Home` page
+
+- Click on `List on Marketplace` button
+
+- Enter a price value for listing the NFT
+
+- Click on `List on Marketplace` button in the modal
+
+This will list the NFT on the market place again
+
+![Alt text](./src/assets/readme/price-list.png)
+![Alt text](./src/assets/readme/listing.png)
+
+### Future work & Bugs
+
+- Upon reloading, sometimes the wallet information is lost or becomes stale. Please try switching accounts on your wallet as this emits an event which our React app listens to and the wallet/NFT details are fetched again.
+  An alternative is to repeat the `connect wallet` steps again.
+
+- Display of alert toasts for buy operations are unreliable. Please check the wallet or explorer for confirmation of listing and buying operations if the front-end doesn't reflect the changes.
+
+- Grouping/Sorting of listed NFTs on the market page does not work currently.

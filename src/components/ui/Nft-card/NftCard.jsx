@@ -19,7 +19,7 @@ import { checkTokenOwnership } from "../../utility/buyOrList";
 
 import { LoadingModal } from "../Modal/LoadingModal";
 
-const NftCard = ({ item }) => {
+const NftCard = ({ item, create }) => {
   const {
     walletInfo,
     accountNames,
@@ -53,7 +53,9 @@ const NftCard = ({ item }) => {
     toast.error("NFT listing failed!");
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log(create);
+  }, []);
 
   return (
     <div className="single__nft__card">
@@ -122,30 +124,34 @@ const NftCard = ({ item }) => {
         </div>
 
         <div className=" mt-3 d-flex align-items-center justify-content-between">
-          <button
-            className="bid__btn d-flex align-items-center gap-1"
-            // onClick={() => setShowModal(true)}
-            onClick={() =>
-              checkTokenOwnership(id, ownedNfts)
-                ? setShowModal(true)
-                : handleBuy({
-                    currentBid,
-                    id,
-                    nfts,
-                    ownedNfts,
-                    updateNFTs,
-                    updateOwnedNFTs,
+          {(create === false || create === undefined) && (
+            <button
+              className="bid__btn d-flex align-items-center gap-1"
+              // onClick={() => setShowModal(true)}
+              onClick={() =>
+                checkTokenOwnership(id, ownedNfts)
+                  ? setShowModal(true)
+                  : handleBuy({
+                      currentBid,
+                      id,
+                      nfts,
+                      ownedNfts,
+                      updateNFTs,
+                      updateOwnedNFTs,
 
-                    setLoading,
-                    setStatus,
-                    buyNFTSuccess,
-                    buyNFTFail,
-                  })
-            }
-          >
-            {checkTokenOwnership(id, ownedNfts) ? "List on Marketplace" : "Buy"}
-            {/* <i class="ri-shopping-bag-line"></i> Place Bid */}
-          </button>
+                      setLoading,
+                      setStatus,
+                      buyNFTSuccess,
+                      buyNFTFail,
+                    })
+              }
+            >
+              {checkTokenOwnership(id, ownedNfts)
+                ? "List on Marketplace"
+                : "Buy"}
+              {/* <i class="ri-shopping-bag-line"></i> Place Bid */}
+            </button>
+          )}
           {showModal && (
             <Modal
               setShowModal={setShowModal}
@@ -157,9 +163,9 @@ const NftCard = ({ item }) => {
             />
           )}
 
-          <span className="history__link">
+          {/* <span className="history__link">
             <Link to="#">View History</Link>
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

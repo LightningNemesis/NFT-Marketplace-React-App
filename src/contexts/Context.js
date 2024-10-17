@@ -28,34 +28,34 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const storedWalletInfo = JSON.parse(localStorage.getItem("walletInfo"));
 
-    const storedAccountNames =
-      JSON.parse(localStorage.getItem("accountNames")) || {};
+    // const storedAccountNames =
+    //   JSON.parse(localStorage.getItem("accountNames")) || {};
 
-    const storedAvatarMap =
-      JSON.parse(localStorage.getItem("addressAvatarMap")) || {};
+    // const storedAvatarMap =
+    //   JSON.parse(localStorage.getItem("addressAvatarMap")) || {};
 
-    const storedNFTs = localStorage.getItem("nfts");
-    const storedMintedNFTs = localStorage.getItem("mintedNfts");
-    const storedOwnedNFTs = localStorage.getItem("ownedNfts");
+    // const storedNFTs = localStorage.getItem("nfts");
+    // const storedMintedNFTs = localStorage.getItem("mintedNfts");
+    // const storedOwnedNFTs = localStorage.getItem("ownedNfts");
 
     if (storedWalletInfo && Object.keys(storedWalletInfo).length > 0) {
       setWalletInfo(storedWalletInfo);
     }
-    if (Object.keys(storedAccountNames).length > 0) {
-      setAccountNames(storedAccountNames);
-    }
-    if (Object.keys(storedAvatarMap).length > 0) {
-      setAddressAvatarMap(storedAvatarMap);
-    }
-    if (storedNFTs) {
-      setNfts(JSON.parse(storedNFTs));
-    }
-    if (storedMintedNFTs) {
-      setMintedNfts(JSON.parse(storedMintedNFTs));
-    }
-    if (storedOwnedNFTs) {
-      setOwnedNfts(JSON.parse(storedOwnedNFTs));
-    }
+    // if (Object.keys(storedAccountNames).length > 0) {
+    //   setAccountNames(storedAccountNames);
+    // }
+    // if (Object.keys(storedAvatarMap).length > 0) {
+    //   setAddressAvatarMap(storedAvatarMap);
+    // }
+    // if (storedNFTs) {
+    //   setNfts(JSON.parse(storedNFTs));
+    // }
+    // if (storedMintedNFTs) {
+    //   setMintedNfts(JSON.parse(storedMintedNFTs));
+    // }
+    // if (storedOwnedNFTs) {
+    //   setOwnedNfts(JSON.parse(storedOwnedNFTs));
+    // }
   }, []);
 
   const fetchNFTs = useCallback(async () => {

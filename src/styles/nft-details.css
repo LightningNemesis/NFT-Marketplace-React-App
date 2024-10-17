@@ -27,7 +27,7 @@
   background: #343444;
   padding: 15px;
   border-radius: 7px;
-  width: 50%;
+  /* width: 50%; */
 }
 
 .creator__img {
@@ -40,6 +40,8 @@
   font-weight: 300;
   margin-bottom: 0;
   margin-top: 0;
+
+  width: 100px;
 }
 
 .creator__detail h6 {

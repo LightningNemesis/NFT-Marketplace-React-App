@@ -12,68 +12,36 @@ import StepSection from "../components/ui/Step-section/StepSection";
 
 import { AppContext } from "../contexts/Context";
 
+import { connectWallet } from "../components/utility/walletFunctions";
+
 const Home = () => {
-  const { walletInfo, updateWalletInfo, accountNames } = useContext(AppContext);
-
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-
-        // Request access to accounts
-        await provider.send("eth_requestAccounts", []);
-
-        // Get the signer and address
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-
-        // Fetch and format the balance
-        const balance = await provider.getBalance(address);
-        const formattedBalance = ethers.formatEther(balance);
-
-        // Fetch the network information
-        const network = await provider.getNetwork();
-
-        // Generate a random name for the account
-
-        // Store the fetched details in an object
-        const newWalletInfo = {
-          account: address,
-          balance: formattedBalance + " ETH",
-          networkName: network.name || "unknown",
-          networkChainId: network.chainId.toString(),
-        };
-
-        console.log("New Wallet Info:", newWalletInfo);
-
-        updateWalletInfo(newWalletInfo);
-      } catch (error) {
-        console.error("Error connecting to MetaMask:", error);
-      }
-    } else {
-      console.error("MetaMask is not installed.");
-    }
-  };
+  const {
+    mintedNfts,
+    nfts,
+    ownedNfts,
+    walletInfo,
+    updateWalletInfo,
+    accountNames,
+  } = useContext(AppContext);
 
   useEffect(() => {
-    // console.log("Wallet Info:", walletInfo);
-    // console.log("Account Names:", accountNames);
-    if (window.ethereum) {
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length > 0) {
-          connectWallet(); // Reconnect and update wallet info
-        }
-      };
-
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-
-      return () => {
-        window.ethereum.removeListener(
-          "accountsChanged",
-          handleAccountsChanged
-        );
-      };
-    }
+    // if (window.ethereum) {
+    //   const handleAccountsChanged = (accounts) => {
+    //     if (accounts.length > 0) {
+    //       connectWallet(updateWalletInfo); // Reconnect and update wallet info
+    //     }
+    //   };
+    //   window.ethereum.on("accountsChanged", handleAccountsChanged);
+    //   return () => {
+    //     window.ethereum.removeListener(
+    //       "accountsChanged",
+    //       handleAccountsChanged
+    //     );
+    //   };
+    // }
+    console.log("minted nfts", mintedNfts);
+    console.log("listed nfts", nfts);
+    console.log("owned nfts", ownedNfts);
   }, [walletInfo, accountNames]);
 
   return (

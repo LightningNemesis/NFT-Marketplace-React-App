@@ -14,3 +14,11 @@ export const avatarImages = {
   "ava-06.png": ava06,
   default: ava06,
 };
+
+export const getAvatarForAddress = (addressAvatarMap, address) => {
+  if (addressAvatarMap && addressAvatarMap[address]) {
+    return avatarImages[addressAvatarMap[address]]; // Return the avatar image based on the index
+  } else {
+    return avatarImages.default; // Fallback to default image if no avatar found
+  }
+};

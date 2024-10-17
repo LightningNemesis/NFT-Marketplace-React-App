@@ -1,11 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { ethers, parseEther } from "ethers"; // Import parseEther directly
 import { Container, Row, Col } from "reactstrap";
 
 import CommonSection from "../components/ui/Common-section/CommonSection";
 import NftCard from "../components/ui/Nft-card/NftCard";
-import img from "../assets/images/img-01.jpg";
+// import defaultTokenImg from "../assets/images/img-06.jpg";
+import defaultTokenImg from "../assets/images/img-06.jpg";
 import avatar from "../assets/images/ava-01.png";
+// import img06 from "../assets/images/img-06.png";
 
 import { AppContext } from "../contexts/Context";
 import MyNFTContract from "../components/contracts/NFTMarketplace.json";
@@ -17,17 +21,19 @@ import {
 
 import "../styles/create-item.css";
 
-const item = {
-  id: "01",
-  title: "Guard",
-  desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
-  imgUrl: img,
-  creator: "Trista Francis",
-  creatorImg: avatar,
-  currentBid: 7.89,
-};
+// const item = {
+//   id: "01",
+//   title: "Guard",
+//   desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
+//   imgUrl: img,
+//   creator: "Trista Francis",
+//   creatorImg: avatar,
+//   currentBid: 7.89,
+// };
 
 const Create = () => {
+  const navigate = useNavigate(); // Initialize navigate
+
   const MARKETPLACE_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
 
   const { nfts, updateNFTs } = useContext(AppContext); // Access context
@@ -38,10 +44,60 @@ const Create = () => {
   const [description, setDescription] = useState("");
   const [royalty, setRoyalty] = useState(0); // New state for royalty
 
+  const [item, setItem] = useState({
+    id: "01",
+    title: "",
+    desc: "",
+    imgUrl: defaultTokenImg, // Default avatar or placeholder image
+    creator: "Trista Francis",
+    creatorImg: avatar,
+    currentBid: 0,
+  });
+
+  // Update item preview as form inputs change
+  useEffect(() => {
+    setItem({
+      id: "01", // Placeholder ID for preview purposes
+      title: title || "Untitled NFT",
+      desc: description || "No description provided",
+      imgUrl: file ? URL.createObjectURL(file) : defaultTokenImg, // Use selected file or default image
+      creator: "Trista Francis", // Replace with dynamic creator info if available
+      creatorImg: avatar, // Replace with dynamic creator image if available
+      currentBid: price || 0,
+    });
+  }, []);
+
+  const handleTitleChange = (e) => {
+    const inpuTtitle = e.target.value;
+
+    setTitle(inpuTtitle);
+
+    setItem((prevItem) => ({
+      ...prevItem,
+      title: inpuTtitle,
+    }));
+  };
+
+  const handleDescChange = (e) => {
+    const inputDesc = e.target.value;
+
+    setDescription(inputDesc);
+
+    setItem((prevItem) => ({
+      ...prevItem,
+      desc: inputDesc,
+    }));
+  };
+
   const handlePriceChange = (e) => {
     const inputPrice = e.target.value;
     if (!isNaN(inputPrice) && Number(inputPrice) >= 0) {
       setPrice(inputPrice);
+
+      setItem((prevItem) => ({
+        ...prevItem,
+        currentBid: inputPrice,
+      }));
     } else {
       console.error("Invalid price entered");
     }
@@ -55,6 +111,10 @@ const Create = () => {
       Number(inputRoyalty) <= 100
     ) {
       setRoyalty(inputRoyalty);
+      setItem((prevItem) => ({
+        ...prevItem,
+        royalty: inputRoyalty,
+      }));
     } else {
       console.error("Invalid royalty entered");
     }
@@ -62,6 +122,10 @@ const Create = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    setItem((prevItem) => ({
+      ...prevItem,
+      imgUrl: URL.createObjectURL(e.target.files[0]),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -131,6 +195,7 @@ const Create = () => {
         };
 
         updateNFTs([...nfts, newNFT]);
+        navigate("/home"); // Replace "/home" with your actual Home route path
       }
     } catch (error) {
       console.error("Error creating NFT:", error);
@@ -191,7 +256,7 @@ const Create = () => {
                       type="text"
                       placeholder="Enter title"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) => handleTitleChange(e)}
                     />
                   </div>
 
@@ -202,7 +267,7 @@ const Create = () => {
                       placeholder="Enter description"
                       className="w-100"
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={(e) => handleDescChange(e)}
                     ></textarea>
                   </div>
 

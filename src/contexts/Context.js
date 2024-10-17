@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 import {
   getNFTs,
   getOwnedNFTs,
+  getUnlistedNFTs,
 } from "../components/contracts/contractInteraction.js";
 import { generateRandomName } from "../components/utility/randomNameGenerator.js";
 
@@ -10,6 +11,7 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [walletInfo, setWalletInfo] = useState({});
   const [nfts, setNfts] = useState([]);
+  const [mintedNfts, setMintedNfts] = useState([]);
   const [ownedNfts, setOwnedNfts] = useState([]);
   const [accountNames, setAccountNames] = useState({});
   const [addressAvatarMap, setAddressAvatarMap] = useState({});
@@ -25,11 +27,15 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const storedWalletInfo = JSON.parse(localStorage.getItem("walletInfo"));
+
     const storedAccountNames =
       JSON.parse(localStorage.getItem("accountNames")) || {};
+
     const storedAvatarMap =
       JSON.parse(localStorage.getItem("addressAvatarMap")) || {};
+
     const storedNFTs = localStorage.getItem("nfts");
+    const storedMintedNFTs = localStorage.getItem("mintedNfts");
     const storedOwnedNFTs = localStorage.getItem("ownedNfts");
 
     if (storedWalletInfo && Object.keys(storedWalletInfo).length > 0) {
@@ -43,6 +49,9 @@ export const AppProvider = ({ children }) => {
     }
     if (storedNFTs) {
       setNfts(JSON.parse(storedNFTs));
+    }
+    if (storedMintedNFTs) {
+      setMintedNfts(JSON.parse(storedMintedNFTs));
     }
     if (storedOwnedNFTs) {
       setOwnedNfts(JSON.parse(storedOwnedNFTs));
@@ -62,6 +71,23 @@ export const AppProvider = ({ children }) => {
   const updateNFTs = (newNFTs) => {
     setNfts(newNFTs);
     localStorage.setItem("nfts", JSON.stringify(newNFTs));
+  };
+
+  // Fetch unlisted minted NFTs
+  const fetchMintedNFTs = useCallback(async () => {
+    try {
+      const fetchedMintedNFTs = await getUnlistedNFTs();
+      console.log("Fetched Minted NFTs:", fetchedMintedNFTs);
+      setMintedNfts(fetchedMintedNFTs); // Store them in a separate state variable
+    } catch (error) {
+      console.error("Error fetching minted NFTs:", error);
+    }
+  }, []);
+
+  // Update minted NFTs and store them in localStorage
+  const updateMintedNFTs = (newMintedNFTs) => {
+    setMintedNfts(newMintedNFTs); // Store in state variable for minted NFTs
+    localStorage.setItem("mintedNfts", JSON.stringify(newMintedNFTs)); // Save to localStorage
   };
 
   const fetchOwnedNFTs = useCallback(async () => {
@@ -114,6 +140,9 @@ export const AppProvider = ({ children }) => {
   };
 
   const valuesToShare = {
+    mintedNfts,
+    fetchMintedNFTs,
+    updateMintedNFTs,
     nfts,
     fetchNFTs,
     updateNFTs,

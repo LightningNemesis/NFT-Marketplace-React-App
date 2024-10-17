@@ -11,12 +11,11 @@ import "./live-auction.css";
 // import { getOwnedNFTs } from "../../contracts/contractInteraction.js";
 
 const LiveAuction = () => {
-  const { nfts } = useContext(AppContext);
+  const { nfts, ownedNfts } = useContext(AppContext);
 
   useEffect(() => {
-    // console.log(account);
     // getOwnedNFTs();
-  }, []);
+  }, [nfts, ownedNfts]);
 
   return (
     <section>

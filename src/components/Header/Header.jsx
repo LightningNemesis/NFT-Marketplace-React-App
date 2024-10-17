@@ -5,6 +5,7 @@ import { Container } from "reactstrap";
 import { NavLink, Link } from "react-router-dom";
 
 import { AppContext } from "../../contexts/Context";
+import { addressToName } from "../utility/accountToNames";
 
 const NAV__LINKS = [
   {
@@ -26,26 +27,33 @@ const NAV__LINKS = [
 ];
 
 const Header = () => {
-  const { walletInfo } = useContext(AppContext);
+  const { walletInfo, accountNames } = useContext(AppContext);
 
   const headerRef = useRef(null);
 
   const menuRef = useRef(null);
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
-      if (
-        document.body.scrollTop > 80 ||
-        document.documentElement.scrollTop > 80
-      ) {
-        headerRef.current.classList.add("header__shrink");
-      } else {
-        headerRef.current.classList.remove("header__shrink");
+    // Define the event handler function
+    const handleScroll = () => {
+      if (headerRef.current) {
+        if (
+          document.body.scrollTop > 80 ||
+          document.documentElement.scrollTop > 80
+        ) {
+          headerRef.current.classList.add("header__shrink");
+        } else {
+          headerRef.current.classList.remove("header__shrink");
+        }
       }
-    });
+    };
 
+    // Attach the scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Ensure the exact same function is passed for removal
     return () => {
-      window.removeEventListener("scroll");
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -105,7 +113,10 @@ const Header = () => {
               <Link to="/wallet">
                 {walletInfo && Object.keys(walletInfo).length === 0
                   ? "Connect Wallet"
-                  : `Wallet Connected: ${walletInfo.account.slice(0, 5)}`}
+                  : `Wallet Connected: ${walletInfo.account.slice(
+                      0,
+                      5
+                    )} (${addressToName(accountNames, walletInfo.account)})`}
               </Link>
             </button>
 

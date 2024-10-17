@@ -79,7 +79,7 @@ const Wallet = () => {
     if (window.ethereum) {
       const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
-          connectWallet(); // Reconnect and update wallet info
+          connectWallet(updateWalletInfo); // Reconnect and update wallet info
         }
       };
 

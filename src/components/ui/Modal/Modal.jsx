@@ -1,17 +1,33 @@
 import React, { useState, useContext } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./modal.css";
 import { handleListNFT } from "../../contracts/contractInteraction";
 
 import { AppContext } from "../../../contexts/Context";
 
-const Modal = ({ setShowModal, id }) => {
+const Modal = ({
+  setShowModal,
+  id,
+
+  setLoading,
+  setStatus,
+  listNFTSuccess,
+  listNFTFail,
+}) => {
   const { nfts, ownedNfts, updateNFTs, updateOwnedNFTs } =
     useContext(AppContext);
 
   const [price, setPrice] = useState("");
 
   const handleListing = async () => {
+    if (!price || isNaN(price) || Number(price) <= 0) {
+      toast.error("Please enter a valid price.");
+      return;
+    }
+
+    setShowModal(false);
     await handleListNFT({
       tokenId: id,
       price,
@@ -19,12 +35,29 @@ const Modal = ({ setShowModal, id }) => {
       updateNFTs,
       ownedNfts,
       updateOwnedNFTs,
+
+      setStatus,
+      setLoading,
+      listNFTSuccess,
+      listNFTFail,
     });
-    setShowModal(false);
   };
 
   return (
     <div className="modal__wrapper">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ zIndex: 111112 }}
+      />
       <div className="single__modal">
         <span className="close__modal">
           <i class="ri-close-line" onClick={() => setShowModal(false)}></i>

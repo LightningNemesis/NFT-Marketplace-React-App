@@ -73,12 +73,13 @@ const Footer = () => {
                 <span>
                   <i class="ri-fire-fill"></i>
                 </span>
-                NFTs
+                Artifactory
               </h2>
               <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Voluptate, quod repellat! Quis quos dolorum tenetur fuga?
-                Aspernatur rerum quae amet.
+                Empowering creators and collectors, we bring you a curated
+                marketplace where every piece is a masterpiece, and every trade
+                is a part of your story. Dive in, discover rare finds, and
+                redefine your collection at Artifactory!
               </p>
             </div>
           </Col>
@@ -88,7 +89,7 @@ const Footer = () => {
             <ListGroup className="list__group">
               {MY__ACCOUNT.map((item, index) => (
                 <ListGroupItem key={index} className="list__item">
-                  <Link to={item.url}> {item.display} </Link>
+                  <Link to={"#"}> {item.display} </Link>
                 </ListGroupItem>
               ))}
             </ListGroup>
@@ -99,7 +100,7 @@ const Footer = () => {
             <ListGroup className="list__group">
               {RESOURCES.map((item, index) => (
                 <ListGroupItem key={index} className="list__item">
-                  <Link to={item.url}> {item.display} </Link>
+                  <Link to={"#"}> {item.display} </Link>
                 </ListGroupItem>
               ))}
             </ListGroup>
@@ -110,7 +111,7 @@ const Footer = () => {
             <ListGroup className="list__group">
               {COMPANY.map((item, index) => (
                 <ListGroupItem key={index} className="list__item">
-                  <Link to={item.url}> {item.display} </Link>
+                  <Link to={"#"}> {item.display} </Link>
                 </ListGroupItem>
               ))}
             </ListGroup>
@@ -151,8 +152,7 @@ const Footer = () => {
           <Col lg="12" className=" mt-4 text-center">
             <p className="copyright">
               {" "}
-              Copyrights 2022, Developed by Muhibur Rahman. @Muhib's Tech Diary
-              All Rights Reserved.{" "}
+              Copyrights 2024, Developed by Abhishek Kumar. All Rights Reserved.{" "}
             </p>
           </Col>
         </Row>

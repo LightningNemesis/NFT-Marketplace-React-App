@@ -1,22 +1,25 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./nft-card.css";
 
 import Modal from "../Modal/Modal";
-import BuyModal from "../Modal/BuyModal";
+// import BuyModal from "../Modal/BuyModal";
 
 import { AppContext } from "../../../contexts/Context";
 
-import { avatarImages } from "../../utility/avatarGenerator";
+// import { avatarImages } from "../../utility/avatarGenerator";
 import { getAvatarForAddress } from "../../utility/avatarGenerator";
 import { addressToName } from "../../utility/accountToNames";
 import { handleBuy, handleListNFT } from "../../contracts/contractInteraction";
 import { checkTokenOwnership } from "../../utility/buyOrList";
 
-const NftCard = (props) => {
-  // const MARKETPLACE_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+import { LoadingModal } from "../Modal/LoadingModal";
+
+const NftCard = ({ item }) => {
   const {
     walletInfo,
     accountNames,
@@ -26,25 +29,48 @@ const NftCard = (props) => {
     updateNFTs,
     updateOwnedNFTs,
   } = useContext(AppContext);
+
   const { title, id, currentBid, creatorImg, imgUrl, creator, owner, royalty } =
-    props.item;
+    item;
 
   const [showModal, setShowModal] = useState(false);
-  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state
+  const [status, setStatus] = useState("Loading"); // New status state
 
-  // Function to retrieve the avatar image based on the address
-  // const getAvatarForAddress = (address) => {
-  //   if (addressAvatarMap && addressAvatarMap[address]) {
-  //     return avatarImages[addressAvatarMap[address]]; // Return the avatar image based on the index
-  //   } else {
-  //     return avatarImages.default; // Fallback to default image if no avatar found
-  //   }
-  // };
+  const buyNFTSuccess = () => {
+    toast.success("NFT bought successfully!");
+  };
+
+  const buyNFTFail = () => {
+    toast.error("NFT buy failed!");
+  };
+
+  const listNFTSuccess = () => {
+    toast.success("NFT listed successfully!");
+  };
+
+  const listNFTFail = () => {
+    toast.error("NFT listing failed!");
+  };
 
   useEffect(() => {}, []);
 
   return (
     <div className="single__nft__card">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ zIndex: 111112 }}
+      />
+      {loading && <LoadingModal status={status} />}
       <div className="nft__img">
         <img
           src={imgUrl}
@@ -109,24 +135,27 @@ const NftCard = (props) => {
                     ownedNfts,
                     updateNFTs,
                     updateOwnedNFTs,
+
+                    setLoading,
+                    setStatus,
+                    buyNFTSuccess,
+                    buyNFTFail,
                   })
             }
           >
             {checkTokenOwnership(id, ownedNfts) ? "List on Marketplace" : "Buy"}
             {/* <i class="ri-shopping-bag-line"></i> Place Bid */}
           </button>
-
-          {showModal && <Modal setShowModal={setShowModal} id={id} />}
-          {/* {showBuyModal && (
-            <BuyModal
-              onClose={() => setShowBuyModal(false)}
-              image={imgUrl}
-              price={currentBid}
-              onConfirm={() => {
-                console.log("bought item");
-              }}
+          {showModal && (
+            <Modal
+              setShowModal={setShowModal}
+              id={id}
+              setLoading={setLoading} // Corrected
+              setStatus={setStatus} // Corrected
+              listNFTSuccess={listNFTSuccess}
+              listNFTFail={listNFTFail}
             />
-          )} */}
+          )}
 
           <span className="history__link">
             <Link to="#">View History</Link>

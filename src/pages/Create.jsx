@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { ethers, parseEther } from "ethers"; // Import parseEther directly
 import { Container, Row, Col } from "reactstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import CommonSection from "../components/ui/Common-section/CommonSection";
 import NftCard from "../components/ui/Nft-card/NftCard";
@@ -21,18 +23,19 @@ import {
 
 import "../styles/create-item.css";
 
-// const item = {
-//   id: "01",
-//   title: "Guard",
-//   desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
-//   imgUrl: img,
-//   creator: "Trista Francis",
-//   creatorImg: avatar,
-//   currentBid: 7.89,
-// };
+const LoadingModal = ({ status }) => {
+  return (
+    <div className="loading-modal">
+      <div className="loading-content">
+        <div className="spinner"></div>
+        <p>{status}</p>
+      </div>
+    </div>
+  );
+};
 
 const Create = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  // const navigate = useNavigate(); // Initialize navigate
 
   const MARKETPLACE_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
 
@@ -43,6 +46,8 @@ const Create = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [royalty, setRoyalty] = useState(0); // New state for royalty
+  const [loading, setLoading] = useState(false); // New loading state
+  const [createStatus, setCreateStatus] = useState("Loading"); // New status state
 
   const [item, setItem] = useState({
     id: "01",
@@ -131,6 +136,35 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation checks
+    if (!title.trim()) {
+      toast.error("Title is required.");
+      return;
+    }
+    if (!description.trim()) {
+      toast.error("Description is required.");
+      return;
+    }
+    if (!price || isNaN(price) || Number(price) <= 0) {
+      toast.error("Please enter a valid price.");
+      return;
+    }
+    if (
+      !royalty ||
+      isNaN(royalty) ||
+      Number(royalty) < 0 ||
+      Number(royalty) > 100
+    ) {
+      toast.error("Please enter a valid royalty percentage (0 - 100).");
+      return;
+    }
+    if (!file) {
+      toast.error("Please upload a file for the NFT image.");
+      return;
+    }
+
+    setLoading(true); // Start loading
+
     try {
       console.log("Starting file upload to IPFS...");
       const fileURI = await uploadFileToIPFS(file);
@@ -158,6 +192,7 @@ const Create = () => {
         );
 
         console.log("Minting NFT...");
+        setCreateStatus("Minting NFT...");
         // Pass royalty percentage when minting
         const tx = await contract.mint(metadataURI, royalty);
         const receipt = await tx.wait();
@@ -175,6 +210,7 @@ const Create = () => {
 
         if (price) {
           console.log("Listing NFT for sale...");
+          setCreateStatus("Listing NFT for sale...");
           const ethPrice = parseEther(price.toString());
           const listTx = await contract.listNFT(tokenId, ethPrice);
           await listTx.wait();
@@ -195,7 +231,18 @@ const Create = () => {
         };
 
         updateNFTs([...nfts, newNFT]);
-        navigate("/home"); // Replace "/home" with your actual Home route path
+        // navigate("/home"); // Replace "/home" with your actual Home route path
+        setLoading(false); // Stop loading
+        toast.success("NFT created successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
     } catch (error) {
       console.error("Error creating NFT:", error);
@@ -204,6 +251,20 @@ const Create = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ zIndex: 111112 }}
+      />
+
       <CommonSection title="Create Item" />
       <section>
         <Container>
@@ -216,67 +277,73 @@ const Create = () => {
             <Col lg="9" md="8" sm="6">
               <div className="create__item">
                 <form onSubmit={handleSubmit}>
-                  <div className="form__input">
-                    <label htmlFor="">Upload File</label>
-                    <input
-                      type="file"
-                      className="upload__input"
-                      onChange={handleFileChange}
-                    />
-                  </div>
+                  {loading ? (
+                    <LoadingModal status={createStatus} />
+                  ) : (
+                    <>
+                      <div className="form__input">
+                        <label htmlFor="">Upload File</label>
+                        <input
+                          type="file"
+                          className="upload__input"
+                          onChange={handleFileChange}
+                        />
+                      </div>
 
-                  <div className="form__input">
-                    <label htmlFor="">Price</label>
-                    <input
-                      type="number"
-                      placeholder="Enter price for one item (ETH)"
-                      value={price}
-                      min="0"
-                      step="0.000001" // Allows small decimal values
-                      onChange={handlePriceChange}
-                    />
-                  </div>
+                      <div className="form__input">
+                        <label htmlFor="">Price</label>
+                        <input
+                          type="number"
+                          placeholder="Enter price for one item (ETH)"
+                          value={price}
+                          min="0"
+                          step="0.000001" // Allows small decimal values
+                          onChange={handlePriceChange}
+                        />
+                      </div>
 
-                  <div className="form__input">
-                    <label htmlFor="">Royalty (%)</label>
-                    <input
-                      type="number"
-                      placeholder="Enter royalty percentage"
-                      value={royalty}
-                      step="0.000001" // Allows small decimal values
-                      onChange={handleRoyaltyChange}
-                      min="0"
-                      max="100"
-                    />
-                  </div>
+                      <div className="form__input">
+                        <label htmlFor="">Royalty (%)</label>
+                        <input
+                          type="number"
+                          placeholder="Enter royalty percentage"
+                          value={royalty}
+                          step="0.000001" // Allows small decimal values
+                          onChange={handleRoyaltyChange}
+                          min="0"
+                          max="100"
+                        />
+                      </div>
 
-                  <div className="form__input">
-                    <label htmlFor="">Title</label>
-                    <input
-                      type="text"
-                      placeholder="Enter title"
-                      value={title}
-                      onChange={(e) => handleTitleChange(e)}
-                    />
-                  </div>
+                      <div className="form__input">
+                        <label htmlFor="">Title</label>
+                        <input
+                          type="text"
+                          placeholder="Enter title"
+                          value={title}
+                          onChange={(e) => handleTitleChange(e)}
+                        />
+                      </div>
 
-                  <div className="form__input">
-                    <label htmlFor="">Description</label>
-                    <textarea
-                      rows="7"
-                      placeholder="Enter description"
-                      className="w-100"
-                      value={description}
-                      onChange={(e) => handleDescChange(e)}
-                    ></textarea>
-                  </div>
+                      <div className="form__input">
+                        <label htmlFor="">Description</label>
+                        <textarea
+                          rows="7"
+                          placeholder="Enter description"
+                          className="w-100"
+                          value={description}
+                          onChange={(e) => handleDescChange(e)}
+                        ></textarea>
+                      </div>
 
-                  <button
-                    type="submit"
-                    className="bid__btn d-flex align-items-center gap-1"
-                  >
-                    <i className="ri-shopping-bag-line"></i> Create NFT
-                  </button>
+                      <button
+                        type="submit"
+                        className="bid__btn d-flex align-items-center gap-1"
+                      >
+                        <i className="ri-shopping-bag-line"></i> Create NFT
+                      </button>
+                    </>
+                  )}
                 </form>
               </div>
             </Col>

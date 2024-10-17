@@ -1,6 +1,9 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { AppContext } from "../../../contexts/Context";
 
@@ -39,7 +42,15 @@ const LiveAuction = () => {
           {nfts.length > 0 ? (
             nfts.map((item) => (
               <Col lg="3" md="4" sm="6" className="mb-4" key={item.id}>
-                <NftCard item={item} />
+                <NftCard
+                  item={item}
+                  // setLoading={setLoading} // Pass setLoading separately
+                  // setStatus={setStatus} // Pass setStatus separately
+                  // buyNFTSuccess={buyNFTSuccess}
+                  // buyNFTFail={buyNFTFail}
+                  // listNFTSuccess={listNFTSuccess}
+                  // listNFTFail={listNFTFail}
+                />
               </Col>
             ))
           ) : (

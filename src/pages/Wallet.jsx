@@ -103,10 +103,13 @@ const Wallet = () => {
             <Col lg="12" className="mb-5 text-center">
               <div className="w-50 m-auto">
                 <h3 className="text-light">Connect your wallet</h3>
+                <br />
                 <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Minima numquam nisi, quam obcaecati a provident voluptas sequi
-                  unde officiis placeat!
+                  Connect your wallet to unlock the full Artifactory experience.
+                  Seamlessly explore, buy, and sell exclusive NFTs, all while
+                  securely managing your digital assets. With just a few clicks,
+                  step into the world of digital ownership and showcase your
+                  unique collections on the Artifactory marketplace!
                 </p>
                 <button onClick={connectWallet} className="btn btn-primary">
                   {Object.keys(walletInfo).length === 0

@@ -20,10 +20,10 @@ const NAV__LINKS = [
     display: "Create",
     url: "/create",
   },
-  {
-    display: "Contact",
-    url: "/contact",
-  },
+  // {
+  //   display: "Contact",
+  //   url: "/contact",
+  // },
 ];
 
 const Header = () => {
@@ -68,7 +68,7 @@ const Header = () => {
               <span>
                 <i class="ri-fire-fill"></i>
               </span>
-              NFTs
+              Artifactory
             </h2>
           </div>
 
@@ -115,7 +115,7 @@ const Header = () => {
                   ? "Connect Wallet"
                   : `Wallet Connected: ${walletInfo.account.slice(
                       0,
-                      5
+                      8
                     )} (${addressToName(accountNames, walletInfo.account)})`}
               </Link>
             </button>

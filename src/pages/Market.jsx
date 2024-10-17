@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import CommonSection from "../components/ui/Common-section/CommonSection";
 
 import NftCard from "../components/ui/Nft-card/NftCard";
 
 import { NFT__DATA } from "../assets/data/data";
+import { AppContext } from "../contexts/Context";
 
 import { Container, Row, Col } from "reactstrap";
 
@@ -12,6 +13,7 @@ import "../styles/market.css";
 
 const Market = () => {
   const [data, setData] = useState(NFT__DATA);
+  const { nfts, ownedNfts } = useContext(AppContext);
 
   const handleCategory = () => {};
 
@@ -43,6 +45,10 @@ const Market = () => {
       setData(filterData);
     }
   };
+
+  useEffect(() => {
+    setData(nfts);
+  }, [nfts]);
 
   return (
     <>

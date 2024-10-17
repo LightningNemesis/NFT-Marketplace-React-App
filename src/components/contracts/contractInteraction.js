@@ -1,6 +1,7 @@
 import { ethers, parseEther } from "ethers";
 import MyNFTContract from "../contracts/NFTMarketplace.json";
 import { ipfsToHttp } from "../utility/ipfsUtility";
+import { ToastContainer, toast } from "react-toastify";
 
 // const contractAddress = "0x8C14266C725bb26E48aCdd2780d094aD4D33FE98";
 const MARKETPLACE_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
@@ -225,9 +226,15 @@ export const handleListNFT = async ({
   updateNFTs,
   ownedNfts,
   updateOwnedNFTs,
+
+  setStatus,
+  setLoading,
+  listNFTSuccess,
+  listNFTFail,
 }) => {
   if (!window.ethereum) return console.error("MetaMask is not installed.");
 
+  setLoading(true);
   try {
     const provider = new ethers.BrowserProvider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
@@ -239,6 +246,7 @@ export const handleListNFT = async ({
     );
 
     console.log("Listing NFT for sale...");
+    setStatus("Listing NFT for sale...");
     const ethPrice = parseEther(price.toString());
     const listTx = await contract.listNFT(tokenId, ethPrice);
     await listTx.wait();
@@ -260,15 +268,25 @@ export const handleListNFT = async ({
       // Add the NFT to the listed NFTs list
       const updatedListedNFTs = [...nfts, listedNFT];
       updateNFTs(updatedListedNFTs);
+      setStatus("Listing NFT for sale...");
 
       console.log("NFT moved from owned to listed with updated price");
+
+      // Showing success message
+      setLoading(false);
+      listNFTSuccess();
     } else {
       console.error("NFT not found in ownedNFTs list");
+      // Showing error message
+      listNFTFail();
+      setLoading(false);
     }
 
     // Optionally update context or state to reflect the listing status
   } catch (error) {
     console.error("Error listing NFT:", error);
+    listNFTFail();
+    setLoading(false);
     return error;
   }
 };
@@ -280,9 +298,16 @@ export const handleBuy = async ({
   updateNFTs,
   ownedNfts,
   updateOwnedNFTs,
+
+  setStatus,
+  setLoading,
+  buyNFTSuccess,
+  buyNFTFail,
 }) => {
-  console.log(currentBid, id);
+  // console.log(currentBid, id);
+
   if (window.ethereum) {
+    setLoading(true);
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
@@ -296,6 +321,7 @@ export const handleBuy = async ({
       const ethPrice = ethers.parseEther(currentBid.toString());
 
       console.log("Buying NFT...");
+      setStatus("Buying NFT...");
       const tx = await contract.buyNFT(id, { value: ethPrice });
       await tx.wait();
 
@@ -317,15 +343,19 @@ export const handleBuy = async ({
 
       // Fetch the updated owned and listed NFTs from the blockchain or update the state accordingly
       const updatedListedNFTs = nfts.filter((nft) => nft.id !== id); // Remove purchased NFT from listed NFTs
+      buyNFTSuccess();
       updateNFTs(updatedListedNFTs);
 
       console.log("NFT purchased successfully");
-
-      // Optionally update context or state here
+      // Showing success message
     } catch (error) {
       console.error("Error buying NFT:", error);
+      // Showing error message
+      buyNFTFail();
     }
+    setLoading(false);
   } else {
     console.error("MetaMask is not installed.");
+    toast.error("NFT buy failed!");
   }
 };
